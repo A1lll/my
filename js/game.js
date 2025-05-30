@@ -1,19 +1,12 @@
-// game.js
-// 三消游戏主逻辑，支持多关卡、不同尺寸，进入下一关无空白、可正常操作
-
+// 你的 LEVELS 配置放在 js/levels.js
+// 这里自动适配屏幕宽度
 class Match3Game {
-    soundEnabled = true; // 音效开关，默认开启
+    soundEnabled = true;
 
     playSound(type) {
-        if (!this.soundEnabled) {
-            console.log(`[Sound] 已静音，跳过音效: ${type}`);
-            return;
-        }
+        if (!this.soundEnabled) return;
         const sound = this.sounds[type];
-        if (!sound) {
-            console.error(`Sound ${type} not loaded!`);
-            return;
-        }
+        if (!sound) return;
         const clonedSound = sound.cloneNode();
         clonedSound.play();
     }
@@ -40,7 +33,6 @@ class Match3Game {
         };
         this.initSoundToggle();
 
-        // 移动端音频解锁
         const unlockAudio = () => {
             Object.values(this.sounds).forEach(audio => {
                 audio.muted = true;
@@ -51,6 +43,8 @@ class Match3Game {
             });
         };
         document.addEventListener('click', unlockAudio, { once: true });
+
+        window.addEventListener("resize", () => this.setGridLayout());
     }
 
     initSoundToggle() {
@@ -59,7 +53,7 @@ class Match3Game {
             soundBtn = document.createElement('button');
             soundBtn.id = 'sound-toggle';
             soundBtn.textContent = '🔊 音效开';
-            soundBtn.style.marginLeft = '10px';
+            soundBtn.className = 'ui-btn';
             const scoreElem = document.getElementById('score');
             if (scoreElem && scoreElem.parentNode) {
                 scoreElem.parentNode.insertBefore(soundBtn, scoreElem.nextSibling);
@@ -82,9 +76,6 @@ class Match3Game {
         audio.preload = "auto";
         audio.style.display = "none";
         document.body.appendChild(audio);
-        audio.onerror = () => {
-            console.error(`[Sound] 加载失败: ${src}，请检查路径和格式`);
-        };
         return audio;
     }
 
@@ -103,8 +94,22 @@ class Match3Game {
         this.startTimer(this.levelConfig.timeLimit);
     };
 
+    setGridLayout() {
+        // 主体宽度
+        const grid = this.gameGrid;
+        const cols = this.cols;
+        // 计算gap+padding总宽度
+        const style = getComputedStyle(grid);
+        const gap = parseFloat(style.gap) || 8;
+        const pad = parseFloat(style.padding) || 8;
+        const gridWidth = Math.min(window.innerWidth * 0.96, 600); // 与css一致
+        // 每格宽度
+        const cellWidth = (gridWidth - (cols - 1) * gap - 2 * pad) / cols;
+
+        grid.style.gridTemplateColumns = `repeat(${cols}, ${cellWidth}px)`;
+    }
+
     init() {
-        this.gameGrid.style.gridTemplateColumns = `repeat(${this.cols}, 1fr)`;
         this.gameGrid.innerHTML = "";
         this.grid = this.generateValidGrid();
         for (let i = 0; i < this.rows; i++) {
@@ -117,6 +122,7 @@ class Match3Game {
                 this.gameGrid.appendChild(cell);
             }
         }
+        this.setGridLayout();
     }
 
     generateValidGrid() {
@@ -138,7 +144,6 @@ class Match3Game {
             isValid = this.validateGrid(newGrid);
         }
         if (!isValid) {
-            // 兜底，随机填满
             return Array.from({ length: this.rows }, () =>
                 Array.from({ length: this.cols }, () =>
                     Math.floor(Math.random() * this.colors) + 1
@@ -193,14 +198,14 @@ class Match3Game {
             if (this.isProcessing || !e.target.classList.contains("cell")) return;
             if (!selectedCell) {
                 selectedCell = e.target;
-                selectedCell.style.transform = "scale(1.1)";
+                selectedCell.classList.add('selected');
             } else {
                 const [r1, c1] = [parseInt(selectedCell.dataset.row), parseInt(selectedCell.dataset.col)];
                 const [r2, c2] = [parseInt(e.target.dataset.row), parseInt(e.target.dataset.col)];
                 if (this.isAdjacent(r1, c1, r2, c2)) {
                     this.swapGems(r1, c1, r2, c2);
                 }
-                selectedCell.style.transform = "";
+                selectedCell.classList.remove('selected');
                 selectedCell = null;
             }
         });
@@ -413,7 +418,7 @@ class Match3Game {
         this.grid = [];
         this.isProcessing = false;
 
-        this.init();  // 只需要重新init，不要fillEmptyCells
+        this.init();
         this.startTimer(this.levelConfig.timeLimit);
     }
 }

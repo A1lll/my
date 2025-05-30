@@ -1,20 +1,27 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>三消游戏（Match3）</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>三消游戏 Match-3</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>三消小游戏</h1>
-  <div class="game-info">
-    <span>分数：</span><span id="score">0</span>
-    <!-- 音效开关按钮会自动插入在此处 -->
-    <button id="restart">重新开始</button>
-  </div>
-  <div id="game-grid"></div>
-  <script src="js/levels.js"></script> <!-- 加在前面 -->
-  <script src="js/game.js"></script>
+    <div class="container">
+        <header>
+            <h1>三消游戏</h1>
+            <div class="info-bar">
+                <div id="timer" class="info-box"></div>
+                <div id="score" class="info-box">0</div>
+                <button id="restart" class="ui-btn">重新开始</button>
+                <button id="sound-toggle" class="ui-btn">🔊 音效开</button>
+            </div>
+        </header>
+        <main>
+            <div id="game-grid" class="game-grid"></div>
+        </main>
+    </div>
+    <script src="js/levels.js"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>

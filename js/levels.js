@@ -11,7 +11,7 @@ const LEVELS = [
     rows: 9,             // 第二关行数
     cols: 9,             // 第二关列数
     colors: 7,           // 第二关宝石种类数
-    timeLimit: 300       // 第二关限时（秒）
+    timeLimit: 100       // 第二关限时（秒）
   }
 ];
 
