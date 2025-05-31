@@ -14,15 +14,18 @@
                 <div id="timer" class="info-box"></div>
                 <div id="score" class="info-box">0</div>
                 <button id="restart" class="ui-btn">重新开始</button>
+                <!-- 音效和背景音乐开关按钮由js动态插入，也可以在这里保留 -->
                 <button id="sound-toggle" class="ui-btn">🔊 音效开</button>
+                <button id="bgm-toggle" class="ui-btn">🎵 音乐开</button>
             </div>
         </header>
         <main>
             <div id="game-grid" class="game-grid"></div>
         </main>
     </div>
+    <!-- 背景音乐audio标签，可由js动态创建，也可以放在这里 -->
+    <audio id="bgm" src="js/sounds/background.mp3" loop autoplay style="display:none"></audio>
     <script src="js/levels.js"></script>
     <script src="js/game.js"></script>
 </body>
 </html>
-<!-- 1111 -->
